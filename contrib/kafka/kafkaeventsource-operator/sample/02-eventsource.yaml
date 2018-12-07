@@ -1,0 +1,14 @@
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: KafkaEventSource
+metadata:
+  name: test-kafkaeventsource
+spec:
+  bootstrap: osnode1.openshift-training.io:31808
+  topic: blah_blah
+  externalIPRanges: 95.216.184.134/24  
+  sink:
+    apiVersion: eventing.knative.dev/v1alpha1
+    kind: Channel
+    name: testchannel
+    
+
