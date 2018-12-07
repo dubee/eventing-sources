@@ -3,9 +3,8 @@ kind: KafkaEventSource
 metadata:
   name: test-kafkaeventsource
 spec:
-  bootstrap: osnode1.openshift-training.io:31808
-  topic: blah_blah
-  externalIPRanges: 95.216.184.134/24  
+  bootstrap: my-cluster-kafka-bootstrap.myproject.svc.cluster.local:9092
+  topic: testtopic
   sink:
     apiVersion: eventing.knative.dev/v1alpha1
     kind: Channel
