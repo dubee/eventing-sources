@@ -84,3 +84,9 @@ The sample connects to a [Strimzi](http://strimzi.io/quickstarts/okd/) Kafka Bro
 ## Configuration
 
 A description of the available options for configuring the EventSource is avaailable [here](Config.md)
+
+## Message Keys
+
+A String representation of the `Key` from the Kafka message is propogated in the `CE-X-Kafka-Key` CloudEvent header.
+If you are consuming the CloudEvents using an SDK this value should be present in the `Extensions` structure.
+

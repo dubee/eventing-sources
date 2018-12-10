@@ -104,9 +104,9 @@ func main() {
 				var raw map[string]interface{}
 				err := json.Unmarshal(msg.Value, &raw)
 				if err != nil {
-					postMessage(msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, msg.Value)
+					postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, msg.Value)
 				} else {
-					postMessage(msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, raw)
+					postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, raw)
 				}
 
 				consumer.MarkOffset(msg, "") // mark message as processed
@@ -118,7 +118,12 @@ func main() {
 }
 
 // Creates a CloudEvent Context for a given Kafka ConsumerMessage.
-func cloudEventsContext(timestamp time.Time, partition int32, offset int64, topic string) *cloudevents.EventContext {
+func cloudEventsContext(key []byte, timestamp time.Time, partition int32, offset int64, topic string) *cloudevents.EventContext {
+
+	extensions := map[string]interface{}{
+		"Kafka-Key": string(key),
+	}
+
 	return &cloudevents.EventContext{
 		// Events are themselves object and have a unique UUID. Could also have used the UID
 		CloudEventsVersion: cloudevents.CloudEventsVersion,
@@ -126,11 +131,12 @@ func cloudEventsContext(timestamp time.Time, partition int32, offset int64, topi
 		EventID:            "partition:" + strconv.Itoa(int(partition)) + "/offset:" + strconv.FormatInt(offset, 10),
 		Source:             topic,
 		EventTime:          timestamp,
+		Extensions:         extensions,
 	}
 }
 
-func postMessage(timestamp time.Time, topic string, target string, partition int32, offset int64, value interface{}) error {
-	ctx := cloudEventsContext(timestamp, partition, offset, topic)
+func postMessage(key []byte, timestamp time.Time, topic string, target string, partition int32, offset int64, value interface{}) error {
+	ctx := cloudEventsContext(key, timestamp, partition, offset, topic)
 
 	log.Printf("Posting to %q", target)
 	// Explicitly using Binary encoding so that Istio, et. al. can better inspect
