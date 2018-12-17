@@ -42,7 +42,7 @@ See the underlying docs for further information.
 
 * channelBufferSize (int): The number of events to buffer in internal and external channels. This permits the consumer to continue processing some messages in the background while user code is working, greatly improving throughput. (default  256)
 
-* group.partitionStrategy (string): The strategy to use for the allocation of partitions to consumers. Should be either `roundrobin` or `range`. (default  range)
+* group.partitionStrategy (string): The strategy to use for the allocation of partitions to consumers. Should be either `RoundRobin` or `Range`. (default  range)
 
 * group.session.timeout (int64): The allowed session timeout for registered consumers. (default 30000000000)
 

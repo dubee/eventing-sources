@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"reflect"
+	"sort"
 	"strconv"
 
 	"github.com/knative/eventing-sources/pkg/controller/sinks"
@@ -16,7 +17,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
@@ -104,6 +104,10 @@ func (r *ReconcileKafkaEventSource) Reconcile(request reconcile.Request) (reconc
 
 	//Resolve the SinkURI
 	sinkURI, err := sinks.GetSinkURI(r.dynamicClient, kafkaEventSource.Spec.Sink, kafkaEventSource.Namespace)
+	if err != nil {
+		log.Printf("Error resolving SinkURI: %s", err)
+		return reconcile.Result{}, err
+	}
 
 	if kafkaEventSource.Status.SinkURI != sinkURI {
 		log.Printf("Setting the SinkURI to %s\n", sinkURI)
@@ -124,9 +128,11 @@ func (r *ReconcileKafkaEventSource) Reconcile(request reconcile.Request) (reconc
 	}
 
 	// Check if this Deployment already exists
-	found := &appsv1.Deployment{}
-	err = r.client.Get(context.TODO(), types.NamespacedName{Name: dep.Name, Namespace: dep.Namespace}, found)
-	if err != nil && errors.IsNotFound(err) {
+	foundDeploymentList := &appsv1.DeploymentList{}
+	deploymentLabelSelector := labels.SelectorFromSet(labelsForKafkaEventSource(kafkaEventSource.Name))
+	deploymentListOps := &client.ListOptions{Namespace: kafkaEventSource.Namespace, LabelSelector: deploymentLabelSelector}
+	err = r.client.List(context.TODO(), deploymentListOps, foundDeploymentList)
+	if err != nil || len(foundDeploymentList.Items) < 1 {
 		//deployment not found
 		log.Printf("Creating a new Deployment %s/%s\n", dep.Namespace, dep.Name)
 		err = r.client.Create(context.TODO(), dep)
@@ -136,21 +142,21 @@ func (r *ReconcileKafkaEventSource) Reconcile(request reconcile.Request) (reconc
 
 		// Deployment created successfully - requeue
 		return reconcile.Result{Requeue: true}, nil
-	} else if err != nil {
-		return reconcile.Result{}, err
 	}
+
+	found := foundDeploymentList.Items[0]
 
 	// Check the config - Environment Variables and annotations
 	if !reflect.DeepEqual(dep.Spec.Template, found.Spec.Template) {
 		found.Spec.Template = dep.Spec.Template
-		err := r.client.Update(context.TODO(), found)
+		err := r.client.Update(context.TODO(), &found)
 		if err != nil {
 			log.Printf("failed to update Deployment configuration:, %s", err)
 			return reconcile.Result{}, err
 		}
 	}
 
-	// Ensure the deployment size is the same as the spec
+	// Ensure the deployment size is the same as the spec. Defaults to 1 if not specified
 	size := kafkaEventSource.Spec.Replicas
 	if size == nil {
 		intendedSize := int32(1)
@@ -160,7 +166,7 @@ func (r *ReconcileKafkaEventSource) Reconcile(request reconcile.Request) (reconc
 	if *found.Spec.Replicas != *size {
 		*found.Spec.Replicas = *size
 		log.Printf("Setting replicas:%d", *size)
-		err = r.client.Update(context.TODO(), found)
+		err = r.client.Update(context.TODO(), &found)
 		if err != nil {
 			log.Printf("Failed to update Deployment: %s", found.Name)
 			return reconcile.Result{}, err
@@ -181,9 +187,12 @@ func (r *ReconcileKafkaEventSource) Reconcile(request reconcile.Request) (reconc
 	}
 
 	podNames := getPodNames(podList.Items)
+	nodes := kafkaEventSource.Status.Nodes
+	sort.Strings(podNames)
+	sort.Strings(nodes)
 
 	// Update status.Nodes if needed
-	if !reflect.DeepEqual(podNames, kafkaEventSource.Status.Nodes) {
+	if !reflect.DeepEqual(podNames, nodes) {
 		kafkaEventSource.Status.Nodes = podNames
 		log.Printf("Updating EventSource.Status.Nodes")
 		err := r.client.Update(context.TODO(), kafkaEventSource)
@@ -193,8 +202,6 @@ func (r *ReconcileKafkaEventSource) Reconcile(request reconcile.Request) (reconc
 		}
 	}
 
-	// Deployment already exists don't requeue
-	log.Printf("Skip reconcile: Deployment %s/%s already exists", found.Namespace, found.Name)
 	return reconcile.Result{}, nil
 }
 
@@ -210,8 +217,9 @@ func deploymentForKafka(kes *sourcesv1alpha1.KafkaEventSource) *appsv1.Deploymen
 			Kind:       "Deployment",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      kes.Name,
-			Namespace: kes.Namespace,
+			GenerateName: kes.Name + "-",
+			Namespace:    kes.Namespace,
+			Labels:       labels,
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: replicas,

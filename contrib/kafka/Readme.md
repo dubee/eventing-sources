@@ -5,7 +5,7 @@ This deploys an Operator that can instantiate Knative Event Sources which subscr
 ## EventSource
 
 The image that receives messages from Kafka (Receive Adaptor) is available at `docker.io/sjwoodman/kafkaeventsource`.
-The build it from source edit the `eventsource/Makefile` with suitable tags for your DockerHub organisation and perform the following commands.
+To build it from source edit the `eventsource/Makefile` with suitable tags for your DockerHub organisation and perform the following commands.
 
 ```bash
 make docker_build docker_push_latest
@@ -80,13 +80,12 @@ The sample connects to a [Strimzi](http://strimzi.io/quickstarts/okd/) Kafka Bro
     $ oc exec -it my-cluster-kafka-0 -- bin/kafka-console-producer.sh --broker-list localhost:9092 --topic input
     > test message
     ```
-    
+
 ## Configuration
 
-A description of the available options for configuring the EventSource is avaailable [here](Config.md)
+A description of the available options for configuring the EventSource is available [here](Config.md)
 
 ## Message Keys
 
 A String representation of the `Key` from the Kafka message is propogated in the `CE-X-Kafka-Key` CloudEvent header.
 If you are consuming the CloudEvents using an SDK this value should be present in the `Extensions` structure.
-

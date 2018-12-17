@@ -22,7 +22,7 @@ type eventsourceconfig struct {
 	ConsumerOffsetsCommitInterval int64
 	ConsumerOffsetsInitial        string
 	ConsumerOffsetsRetention      int64
-	ConsumerOffsetsRetrymax       int64
+	ConsumerOffsetsRetryMax       int64
 	ChannelBufferSize             int64
 	GroupPartitionStrategy        string
 	GroupSessionTimeout           int64
@@ -49,9 +49,9 @@ func GetConfig() eventsourceconfig {
 		ConsumerOffsetsCommitInterval: getIntEnv("CONSUMER_OFFSETS_COMMIT_INTERVAL", 1000000000),
 		ConsumerOffsetsInitial:        getStrEnv("CONSUMER_OFFSETS_INITIAL", "OffsetNewest"),
 		ConsumerOffsetsRetention:      getIntEnv("CONSUMER_OFFSETS_RETENTION", 0),
-		ConsumerOffsetsRetrymax:       getIntEnv("CONSUMER_OFFSETS_RETRY_MAX", 3),
+		ConsumerOffsetsRetryMax:       getIntEnv("CONSUMER_OFFSETS_RETRY_MAX", 3),
 		ChannelBufferSize:             getIntEnv("CHANNEL_BUFFER_SIZE", 256),
-		GroupPartitionStrategy:        getStrEnv("GROUP_PARTITION_STRATEGY", "range"),
+		GroupPartitionStrategy:        getStrEnv("GROUP_PARTITION_STRATEGY", "Range"),
 		GroupSessionTimeout:           getIntEnv("GROUP_SESSION_TIMEOUT", 30000000000),
 
 		Target: os.Getenv("TARGET"),

@@ -36,17 +36,17 @@ func main() {
 	config.Consumer.MaxProcessingTime = time.Duration(eventsourceconfig.ConsumerMaxProcessingTime)
 	config.Consumer.Offsets.CommitInterval = time.Duration(eventsourceconfig.ConsumerOffsetsCommitInterval)
 	config.Consumer.Offsets.Retention = time.Duration(eventsourceconfig.ConsumerOffsetsRetention)
-	config.Consumer.Offsets.Retry.Max = int(eventsourceconfig.ConsumerOffsetsRetrymax)
+	config.Consumer.Offsets.Retry.Max = int(eventsourceconfig.ConsumerOffsetsRetryMax)
 	config.ChannelBufferSize = int(eventsourceconfig.ChannelBufferSize)
 	config.Group.Session.Timeout = time.Duration(eventsourceconfig.GroupSessionTimeout)
 
 	kafkaversion, err := sarama.ParseKafkaVersion(eventsourceconfig.KafkaVersion)
 	if err != nil {
-		log.Println("Unsupported Kafka Version. Should be in format 2_0_0_0")
+		log.Println("Unsupported Kafka Version. Should be in format 2.0.0")
 		log.Printf("Defaulting to minimum supported version: %s", kafkaversion)
 	}
-	log.Printf("Setting Kafka version to: %s", eventsourceconfig.KafkaVersion)
 	config.Version = kafkaversion
+	log.Printf("Setting Kafka version to: %s", config.Version)
 
 	config.Consumer.Offsets.Initial = sarama.OffsetNewest
 	if eventsourceconfig.ConsumerOffsetsInitial == "OffsetOldest" {
@@ -55,7 +55,7 @@ func main() {
 	}
 
 	config.Group.PartitionStrategy = cluster.StrategyRange
-	if eventsourceconfig.GroupPartitionStrategy == "roundrobin" {
+	if eventsourceconfig.GroupPartitionStrategy == "RoundRobin" {
 		config.Group.PartitionStrategy = cluster.StrategyRoundRobin
 	}
 
@@ -69,6 +69,8 @@ func main() {
 	}
 	log.Printf("Setting ConsumerGroupID to: %s", consumerGroupID)
 
+	config.Consumer.Return.Errors = false
+
 	consumer, err := cluster.NewConsumer(brokers, consumerGroupID, topics, config)
 	if err != nil {
 		panic(err)
@@ -78,13 +80,6 @@ func main() {
 	// trap SIGINT to trigger a shutdown.
 	signals := make(chan os.Signal, 1)
 	signal.Notify(signals, os.Interrupt)
-
-	// consume errors
-	go func() {
-		for err := range consumer.Errors() {
-			log.Printf("Error: %s\n", err.Error())
-		}
-	}()
 
 	// consume notifications
 	go func() {
@@ -101,15 +96,28 @@ func main() {
 				// fmt.Fprintf(os.Stdout, "%s/%d/%d\t%s\t%s\n", msg.Topic, msg.Partition, msg.Offset, msg.Key, msg.Value)
 				log.Printf("Received %s", msg.Value)
 
-				var raw map[string]interface{}
-				err := json.Unmarshal(msg.Value, &raw)
+				var jsonPayload map[string]interface{}
+				err := json.Unmarshal(msg.Value, &jsonPayload)
 				if err != nil {
-					postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, msg.Value)
+						log.Printf("Unable to unmarshal message value: %s", msg.Value)
+						log.Printf("Error: %s", err)
+						//todo: Fix error catching as above doesn't fire
+						posterr := postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, "application/json", msg.Value)
+						if posterr != nil{
+							consumer.MarkOffset(msg, "") // mark message as processed
+						}else{
+							log.Printf("Error posting message: %s", err)
+						}
+	
 				} else {
-					postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, raw)
+					//valid JSON message
+					posterr := postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, "application/json", jsonPayload)
+					if(posterr != nil){
+						consumer.MarkOffset(msg, "") // mark message as processed
+					}else{
+						log.Printf("Error posting message: %s", err)
+					}
 				}
-
-				consumer.MarkOffset(msg, "") // mark message as processed
 			}
 		case <-signals:
 			return
@@ -118,7 +126,7 @@ func main() {
 }
 
 // Creates a CloudEvent Context for a given Kafka ConsumerMessage.
-func cloudEventsContext(key []byte, timestamp time.Time, partition int32, offset int64, topic string) *cloudevents.EventContext {
+func cloudEventsContext(key []byte, timestamp time.Time, partition int32, offset int64, topic string, contentType string) *cloudevents.EventContext {
 
 	extensions := map[string]interface{}{
 		"Kafka-Key": string(key),
@@ -132,11 +140,12 @@ func cloudEventsContext(key []byte, timestamp time.Time, partition int32, offset
 		Source:             topic,
 		EventTime:          timestamp,
 		Extensions:         extensions,
+		ContentType:        contentType,
 	}
 }
 
-func postMessage(key []byte, timestamp time.Time, topic string, target string, partition int32, offset int64, value interface{}) error {
-	ctx := cloudEventsContext(key, timestamp, partition, offset, topic)
+func postMessage(key []byte, timestamp time.Time, topic string, target string, partition int32, offset int64, contentType string, value interface{}) error {
+	ctx := cloudEventsContext(key, timestamp, partition, offset, topic, contentType)
 
 	log.Printf("Posting to %q", target)
 	// Explicitly using Binary encoding so that Istio, et. al. can better inspect
