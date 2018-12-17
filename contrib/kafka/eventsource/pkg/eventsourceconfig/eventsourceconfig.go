@@ -1,6 +1,7 @@
 package eventsourceconfig
 
 import (
+	"log"
 	"os"
 	"strconv"
 	"strings"
@@ -67,7 +68,10 @@ func getStrEnv(key string, defaultVal string) string {
 
 func getIntEnv(key string, defaultVal int64) int64 {
 	if val := os.Getenv(key); val != "" {
-		intval, _ := strconv.ParseInt(val, 10, 64)
+		intval, err := strconv.ParseInt(val, 10, 64)
+		if err != nil {
+			log.Printf("Error parsing int environment variable: %s -> %s", key, val)
+		}
 		return intval
 	}
 	return defaultVal
@@ -75,8 +79,11 @@ func getIntEnv(key string, defaultVal int64) int64 {
 
 func getBoolEnv(key string, defaultVal bool) bool {
 	if val := os.Getenv(key); val != "" {
-		intval, _ := strconv.ParseBool(val)
-		return intval
+		boolval, err := strconv.ParseBool(val)
+		if err != nil {
+			log.Printf("Error parsing bool environment variable: %s -> %s", key, val)
+		}
+		return boolval
 	}
 	return defaultVal
 }
