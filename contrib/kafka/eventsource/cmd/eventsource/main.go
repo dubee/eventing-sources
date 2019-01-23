@@ -99,22 +99,22 @@ func main() {
 				var jsonPayload map[string]interface{}
 				err := json.Unmarshal(msg.Value, &jsonPayload)
 				if err != nil {
-						log.Printf("Unable to unmarshal message value: %s", msg.Value)
-						log.Printf("Error: %s", err)
-						//todo: Fix error catching as above doesn't fire
-						posterr := postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, "application/json", msg.Value)
-						if posterr != nil{
-							consumer.MarkOffset(msg, "") // mark message as processed
-						}else{
-							log.Printf("Error posting message: %s", err)
-						}
-	
+					log.Printf("Unable to unmarshal message value: %s", msg.Value)
+					log.Printf("Error: %s", err)
+					//todo: Fix error catching as above doesn't fire
+					posterr := postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, "application/json", msg.Value)
+					if posterr == nil {
+						consumer.MarkOffset(msg, "") // mark message as processed
+					} else {
+						log.Printf("Error posting message: %s", err)
+					}
+
 				} else {
 					//valid JSON message
 					posterr := postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, "application/json", jsonPayload)
-					if(posterr != nil){
+					if posterr != nil {
 						consumer.MarkOffset(msg, "") // mark message as processed
-					}else{
+					} else {
 						log.Printf("Error posting message: %s", err)
 					}
 				}
