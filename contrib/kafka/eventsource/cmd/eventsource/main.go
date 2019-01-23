@@ -112,7 +112,7 @@ func main() {
 				} else {
 					//valid JSON message
 					posterr := postMessage(msg.Key, msg.Timestamp, eventsourceconfig.KafkaTopic, eventsourceconfig.Target, msg.Partition, msg.Offset, "application/json", jsonPayload)
-					if posterr != nil {
+					if posterr == nil {
 						consumer.MarkOffset(msg, "") // mark message as processed
 					} else {
 						log.Printf("Error posting message: %s", err)
