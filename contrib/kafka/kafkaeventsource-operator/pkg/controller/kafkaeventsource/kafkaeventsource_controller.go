@@ -217,7 +217,7 @@ func deploymentForKafka(kes *sourcesv1alpha1.KafkaEventSource) *appsv1.Deploymen
 			Kind:       "Deployment",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			GenerateName: kes.Name + "-",
+			Name: 	      kes.Name,
 			Namespace:    kes.Namespace,
 			Labels:       labels,
 		},
