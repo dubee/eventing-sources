@@ -89,3 +89,15 @@ A description of the available options for configuring the EventSource is availa
 
 A String representation of the `Key` from the Kafka message is propogated in the `CE-X-Kafka-Key` CloudEvent header.
 If you are consuming the CloudEvents using an SDK this value should be present in the `Extensions` structure.
+
+## Building EventSource Operator
+
+The KafkaEventSource Operator is built using the Operator SDK.
+To build the Operator image use the following command. 
+Note that you will need to change the name of the image created in the `deploy/operator.yaml` to match you image name.
+
+```bash
+operator-sdk build DH_ORG/IMG_NAME:latest
+#eg.
+operator-sdk build docker.io/sjwoodman/kafkaeventsource-operator:latest
+```
