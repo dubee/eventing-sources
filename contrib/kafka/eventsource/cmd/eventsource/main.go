@@ -32,6 +32,7 @@ func main() {
 	config.Net.SASL.Handshake = eventsourceconfig.NetSaslHandshake
 	config.Net.SASL.User = eventsourceconfig.NetSaslUser
 	config.Net.SASL.Password = eventsourceconfig.NetSaslPassword
+	config.Net.TLS.Enable = true // TODO
 	config.Consumer.MaxWaitTime = time.Duration(eventsourceconfig.ConsumerMaxWaitTime)
 	config.Consumer.MaxProcessingTime = time.Duration(eventsourceconfig.ConsumerMaxProcessingTime)
 	config.Consumer.Offsets.CommitInterval = time.Duration(eventsourceconfig.ConsumerOffsetsCommitInterval)

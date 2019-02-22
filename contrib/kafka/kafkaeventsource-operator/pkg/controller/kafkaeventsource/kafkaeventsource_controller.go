@@ -217,9 +217,9 @@ func deploymentForKafka(kes *sourcesv1alpha1.KafkaEventSource) *appsv1.Deploymen
 			Kind:       "Deployment",
 		},
 		ObjectMeta: metav1.ObjectMeta{
-			Name: 	      kes.Name,
-			Namespace:    kes.Namespace,
-			Labels:       labels,
+			Name:      kes.Name,
+			Namespace: kes.Namespace,
+			Labels:    labels,
 		},
 		Spec: appsv1.DeploymentSpec{
 			Replicas: replicas,
@@ -233,7 +233,7 @@ func deploymentForKafka(kes *sourcesv1alpha1.KafkaEventSource) *appsv1.Deploymen
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{{
-						Image:           "sjwoodman/kafkaeventsource:latest",
+						Image:           "dubee/kafkaeventsource:latest",
 						Name:            "kafkaeventsource",
 						ImagePullPolicy: "IfNotPresent",
 						Env:             envvars,

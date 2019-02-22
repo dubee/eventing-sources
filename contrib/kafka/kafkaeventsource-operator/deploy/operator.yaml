@@ -15,7 +15,7 @@ spec:
       serviceAccountName: kafkaeventsource-operator
       containers:
         - name: kafkaeventsource-operator
-          image: docker.io/sjwoodman/kafkaeventsource-operator:latest
+          image: docker.io/dubee/kafkaeventsource-operator:latest
           ports:
           - containerPort: 60000
             name: metrics
