@@ -233,9 +233,9 @@ func deploymentForKafka(kes *sourcesv1alpha1.KafkaEventSource) *appsv1.Deploymen
 				},
 				Spec: corev1.PodSpec{
 					Containers: []corev1.Container{{
-						Image:           "sjwoodman/kafkaeventsource:latest",
+						Image:           "dubee/kafkaeventsource:latest",
 						Name:            "kafkaeventsource",
-						ImagePullPolicy: "IfNotPresent",
+						ImagePullPolicy: "Always",
 						Env:             envvars,
 					}},
 				},

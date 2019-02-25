@@ -3,11 +3,16 @@ kind: KafkaEventSource
 metadata:
   name: test-kafkaeventsource
 spec:
-  bootstrap: my-cluster-kafka-bootstrap.myproject.svc.cluster.local:9092
-  topic: testtopic
+  bootstrap: kafka04-prod01.messagehub.services.us-south.bluemix.net:9093
+  topic: dubee
+  net:
+    sasl:
+      enable: true
+      user: "K1jzCQSVE6u54zUs"
+      password: "59X5zdlx4x1MP0BI1PDT6EPD5uylvphe"
+#   tls:
+#     enable: true
   sink:
     apiVersion: eventing.knative.dev/v1alpha1
     kind: Channel
     name: testchannel
-    
-

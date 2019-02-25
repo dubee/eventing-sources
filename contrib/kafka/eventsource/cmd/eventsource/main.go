@@ -26,19 +26,25 @@ func main() {
 	config := cluster.NewConfig()
 	config.Consumer.Return.Errors = true
 	config.Group.Return.Notifications = true
-	config.Net.MaxOpenRequests = int(eventsourceconfig.NetMaxOpenRequests)
-	config.Net.KeepAlive = time.Duration(eventsourceconfig.NetKeepAlive)
-	config.Net.SASL.Enable = eventsourceconfig.NetSaslEnable
-	config.Net.SASL.Handshake = eventsourceconfig.NetSaslHandshake
-	config.Net.SASL.User = eventsourceconfig.NetSaslUser
-	config.Net.SASL.Password = eventsourceconfig.NetSaslPassword
-	config.Consumer.MaxWaitTime = time.Duration(eventsourceconfig.ConsumerMaxWaitTime)
-	config.Consumer.MaxProcessingTime = time.Duration(eventsourceconfig.ConsumerMaxProcessingTime)
-	config.Consumer.Offsets.CommitInterval = time.Duration(eventsourceconfig.ConsumerOffsetsCommitInterval)
-	config.Consumer.Offsets.Retention = time.Duration(eventsourceconfig.ConsumerOffsetsRetention)
-	config.Consumer.Offsets.Retry.Max = int(eventsourceconfig.ConsumerOffsetsRetryMax)
-	config.ChannelBufferSize = int(eventsourceconfig.ChannelBufferSize)
-	config.Group.Session.Timeout = time.Duration(eventsourceconfig.GroupSessionTimeout)
+	//config.Net.MaxOpenRequests = int(eventsourceconfig.NetMaxOpenRequests)
+	//config.Net.KeepAlive = time.Duration(eventsourceconfig.NetKeepAlive)
+	//config.Net.SASL.Enable = eventsourceconfig.NetSaslEnable
+	//config.Net.SASL.Handshake = eventsourceconfig.NetSaslHandshake
+	//config.Net.SASL.User = eventsourceconfig.NetSaslUser
+	//config.Net.SASL.Password = eventsourceconfig.NetSaslPassword
+	config.Net.SASL.Enable = true
+	//config.Net.SASL.Handshake = eventsourceconfig.NetSaslHandshake
+	config.Net.SASL.User = "K1jzCQSVE6u54zUs"
+	config.Net.SASL.Password = "59X5zdlx4x1MP0BI1PDT6EPD5uylvphe"
+	config.Net.TLS.Enable = true
+
+	//config.Consumer.MaxWaitTime = time.Duration(eventsourceconfig.ConsumerMaxWaitTime)
+	//config.Consumer.MaxProcessingTime = time.Duration(eventsourceconfig.ConsumerMaxProcessingTime)
+	//config.Consumer.Offsets.CommitInterval = time.Duration(eventsourceconfig.ConsumerOffsetsCommitInterval)
+	//config.Consumer.Offsets.Retention = time.Duration(eventsourceconfig.ConsumerOffsetsRetention)
+	//config.Consumer.Offsets.Retry.Max = int(eventsourceconfig.ConsumerOffsetsRetryMax)
+	//config.ChannelBufferSize = int(eventsourceconfig.ChannelBufferSize)
+	//config.Group.Session.Timeout = time.Duration(eventsourceconfig.GroupSessionTimeout)
 
 	kafkaversion, err := sarama.ParseKafkaVersion(eventsourceconfig.KafkaVersion)
 	if err != nil {
@@ -60,8 +66,15 @@ func main() {
 	}
 
 	// init consumer
-	brokers := []string{eventsourceconfig.BootStrapServers}
-	topics := []string{eventsourceconfig.KafkaTopic}
+	//brokers := []string{eventsourceconfig.BootStrapServers}
+	//topics := []string{eventsourceconfig.KafkaTopic}
+
+	brokers := []string{"kafka01-prod01.messagehub.services.us-south.bluemix.net:9093",
+	"kafka02-prod01.messagehub.services.us-south.bluemix.net:9093",
+	"kafka03-prod01.messagehub.services.us-south.bluemix.net:9093",
+	"kafka04-prod01.messagehub.services.us-south.bluemix.net:9093",
+	"kafka05-prod01.messagehub.services.us-south.bluemix.net:9093"}
+	topics := []string{"dubee"}
 
 	consumerGroupID := eventsourceconfig.ConsumerGroupID
 	if consumerGroupID == "" {

@@ -1,9 +1,9 @@
 BINARY ?= kafkaeventsource
 APP_NAME = kafkaeventsource
-DOCKER_LATEST_TAG = sjwoodman/$(APP_NAME):latest
-DOCKER_MASTER_TAG = sjwoodman/$(APP_NAME):master
+DOCKER_LATEST_TAG = dubee/$(APP_NAME):latest
+DOCKER_MASTER_TAG = dubee/$(APP_NAME):master
 RELEASE_TAG ?= $(CIRCLE_TAG)
-DOCKER_RELEASE_TAG = sjwoodman/$(APP_NAME):$(RELEASE_TAG)
+DOCKER_RELEASE_TAG = dubee/$(APP_NAME):$(RELEASE_TAG)
 
 .PHONY: generate
 generate:
