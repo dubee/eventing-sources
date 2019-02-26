@@ -26,8 +26,8 @@ func main() {
 	config := cluster.NewConfig()
 	config.Consumer.Return.Errors = true
 	config.Group.Return.Notifications = true
-	//config.Net.MaxOpenRequests = int(eventsourceconfig.NetMaxOpenRequests)
-	//config.Net.KeepAlive = time.Duration(eventsourceconfig.NetKeepAlive)
+	config.Net.MaxOpenRequests = int(eventsourceconfig.NetMaxOpenRequests)
+	config.Net.KeepAlive = time.Duration(eventsourceconfig.NetKeepAlive)
 	//config.Net.SASL.Enable = eventsourceconfig.NetSaslEnable
 	//config.Net.SASL.Handshake = eventsourceconfig.NetSaslHandshake
 	//config.Net.SASL.User = eventsourceconfig.NetSaslUser
@@ -38,13 +38,13 @@ func main() {
 	config.Net.SASL.Password = "59X5zdlx4x1MP0BI1PDT6EPD5uylvphe"
 	config.Net.TLS.Enable = true
 
-	//config.Consumer.MaxWaitTime = time.Duration(eventsourceconfig.ConsumerMaxWaitTime)
-	//config.Consumer.MaxProcessingTime = time.Duration(eventsourceconfig.ConsumerMaxProcessingTime)
-	//config.Consumer.Offsets.CommitInterval = time.Duration(eventsourceconfig.ConsumerOffsetsCommitInterval)
-	//config.Consumer.Offsets.Retention = time.Duration(eventsourceconfig.ConsumerOffsetsRetention)
-	//config.Consumer.Offsets.Retry.Max = int(eventsourceconfig.ConsumerOffsetsRetryMax)
-	//config.ChannelBufferSize = int(eventsourceconfig.ChannelBufferSize)
-	//config.Group.Session.Timeout = time.Duration(eventsourceconfig.GroupSessionTimeout)
+	config.Consumer.MaxWaitTime = time.Duration(eventsourceconfig.ConsumerMaxWaitTime)
+	config.Consumer.MaxProcessingTime = time.Duration(eventsourceconfig.ConsumerMaxProcessingTime)
+	config.Consumer.Offsets.CommitInterval = time.Duration(eventsourceconfig.ConsumerOffsetsCommitInterval)
+	config.Consumer.Offsets.Retention = time.Duration(eventsourceconfig.ConsumerOffsetsRetention)
+	config.Consumer.Offsets.Retry.Max = int(eventsourceconfig.ConsumerOffsetsRetryMax)
+	config.ChannelBufferSize = int(eventsourceconfig.ChannelBufferSize)
+	config.Group.Session.Timeout = time.Duration(eventsourceconfig.GroupSessionTimeout)
 
 	kafkaversion, err := sarama.ParseKafkaVersion(eventsourceconfig.KafkaVersion)
 	if err != nil {
