@@ -4,4 +4,4 @@ USER nobody
 
 ADD build/_output/bin/kafkaeventsource-operator /usr/local/bin/kafkaeventsource-operator
 
-CMD ["/usr/local/bin/kafkaeventsource-operator"]
+ENTRYPOINT ["/usr/local/bin/kafkaeventsource-operator"]
