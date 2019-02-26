@@ -115,7 +115,8 @@ type KafkaEventSourceNet struct {
 	KeepAlive       *int64 `json:"keepAlive"`
 
 	//+optional
-	Sasl KafkaEventSourceSpecSasl `json:"sasl,omitempty"`
+	Sasl KafkaEventSourceSpecSasl	`json:"sasl,omitempty"`
+	Tls KafkaEventSourceSpecTls 	`json:"tls,omitempty"`
 }
 
 // KafkaEventSourceSpecSasl defines whether or not and how to use Sasl authentication
@@ -124,6 +125,10 @@ type KafkaEventSourceSpecSasl struct {
 	Handshake *bool   `json:"handshake"`
 	User      *string `json:"user"`
 	Password  *string `json:"password"`
+}
+
+type KafkaEventSourceSpecTls struct {
+	Enable *bool `json:"enable"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

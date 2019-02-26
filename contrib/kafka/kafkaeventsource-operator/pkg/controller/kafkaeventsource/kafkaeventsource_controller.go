@@ -261,6 +261,7 @@ func getEnvVars(kes *sourcesv1alpha1.KafkaEventSource) []corev1.EnvVar {
 	addBoolIfNotEmpty(&ev, kes.Spec.Net.Sasl.Handshake, "NET_SASL_HANDSHAKE")
 	addStrIfNotEmpty(&ev, kes.Spec.Net.Sasl.User, "NET_SASL_USER")
 	addStrIfNotEmpty(&ev, kes.Spec.Net.Sasl.Password, "NET_SASL_PASSWORD")
+	addBoolIfNotEmpty(&ev, kes.Spec.Net.Tls.Enable, "NET_TLS_ENABLED")
 	addIntIfNotEmpty(&ev, kes.Spec.Consumer.MaxWaitTime, "CONSUMER_MAX_WAIT_TIME")
 	addIntIfNotEmpty(&ev, kes.Spec.Consumer.MaxProcessingTime, "CONSUMER_MAX_PROCESSING_TIME")
 	addIntIfNotEmpty(&ev, kes.Spec.Consumer.Offsets.CommitInterval, "CONSUMER_OFFSETS_COMMIT_INTERVAL")

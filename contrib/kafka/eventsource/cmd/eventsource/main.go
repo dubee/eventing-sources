@@ -21,6 +21,7 @@ func main() {
 
 	eventsourceconfig := eventsourceconfig.GetConfig()
 	log.Printf("BOOTSTRAP_SERVERS: %s", eventsourceconfig.BootStrapServers)
+	log.Printf("Eabled to %t", eventsourceconfig.NetTlsEnable)
 
 	//Config
 	config := cluster.NewConfig()
@@ -28,15 +29,11 @@ func main() {
 	config.Group.Return.Notifications = true
 	config.Net.MaxOpenRequests = int(eventsourceconfig.NetMaxOpenRequests)
 	config.Net.KeepAlive = time.Duration(eventsourceconfig.NetKeepAlive)
-	//config.Net.SASL.Enable = eventsourceconfig.NetSaslEnable
-	//config.Net.SASL.Handshake = eventsourceconfig.NetSaslHandshake
-	//config.Net.SASL.User = eventsourceconfig.NetSaslUser
-	//config.Net.SASL.Password = eventsourceconfig.NetSaslPassword
-	config.Net.SASL.Enable = true
-	//config.Net.SASL.Handshake = eventsourceconfig.NetSaslHandshake
-	config.Net.SASL.User = "K1jzCQSVE6u54zUs"
-	config.Net.SASL.Password = "59X5zdlx4x1MP0BI1PDT6EPD5uylvphe"
-	config.Net.TLS.Enable = true
+	config.Net.SASL.Enable = eventsourceconfig.NetSaslEnable
+	config.Net.SASL.Handshake = eventsourceconfig.NetSaslHandshake
+	config.Net.SASL.User = eventsourceconfig.NetSaslUser
+	config.Net.SASL.Password = eventsourceconfig.NetSaslPassword
+	config.Net.TLS.Enable = eventsourceconfig.NetTlsEnable
 
 	config.Consumer.MaxWaitTime = time.Duration(eventsourceconfig.ConsumerMaxWaitTime)
 	config.Consumer.MaxProcessingTime = time.Duration(eventsourceconfig.ConsumerMaxProcessingTime)
@@ -67,14 +64,14 @@ func main() {
 
 	// init consumer
 	//brokers := []string{eventsourceconfig.BootStrapServers}
-	//topics := []string{eventsourceconfig.KafkaTopic}
+	topics := []string{eventsourceconfig.KafkaTopic}
 
 	brokers := []string{"kafka01-prod01.messagehub.services.us-south.bluemix.net:9093",
 	"kafka02-prod01.messagehub.services.us-south.bluemix.net:9093",
 	"kafka03-prod01.messagehub.services.us-south.bluemix.net:9093",
 	"kafka04-prod01.messagehub.services.us-south.bluemix.net:9093",
 	"kafka05-prod01.messagehub.services.us-south.bluemix.net:9093"}
-	topics := []string{"dubee"}
+	//topics := []string{"dubee"}
 
 	consumerGroupID := eventsourceconfig.ConsumerGroupID
 	if consumerGroupID == "" {

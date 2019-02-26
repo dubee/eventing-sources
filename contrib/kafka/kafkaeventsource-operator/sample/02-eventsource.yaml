@@ -10,8 +10,8 @@ spec:
       enable: true
       user: "K1jzCQSVE6u54zUs"
       password: "59X5zdlx4x1MP0BI1PDT6EPD5uylvphe"
-#   tls:
-#     enable: true
+    tls:
+      enable: true
   sink:
     apiVersion: eventing.knative.dev/v1alpha1
     kind: Channel

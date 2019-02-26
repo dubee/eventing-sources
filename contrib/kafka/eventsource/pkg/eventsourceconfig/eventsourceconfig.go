@@ -18,6 +18,7 @@ type eventsourceconfig struct {
 	NetSaslHandshake              bool
 	NetSaslUser                   string
 	NetSaslPassword               string
+	NetTlsEnable				  bool
 	ConsumerMaxWaitTime           int64
 	ConsumerMaxProcessingTime     int64
 	ConsumerOffsetsCommitInterval int64
@@ -41,10 +42,11 @@ func GetConfig() eventsourceconfig {
 		KafkaVersion:                  getStrEnv("KAFKA_VERSION", "2.0.0"),
 		NetMaxOpenRequests:            getIntEnv("NET_MAX_OPEN_REQUESTS", 5),
 		NetKeepAlive:                  getIntEnv("NET_KEEPALIVE", 0),
-		NetSaslEnable:                 getBoolEnv("SASL_ENABLE", false),
-		NetSaslHandshake:              getBoolEnv("SASL_HANDSHAKE", false),
-		NetSaslUser:                   os.Getenv("SASL_USER"),
-		NetSaslPassword:               os.Getenv("SASL_PASSWORD"),
+		NetSaslEnable:                 getBoolEnv("NET_SASL_ENABLED", false),
+		NetSaslHandshake:              getBoolEnv("NET_SASL_HANDSHAKE", false),
+		NetSaslUser:                   os.Getenv("NET_SASL_USER"),
+		NetSaslPassword:               os.Getenv("NET_SASL_PASSWORD"),
+		NetTlsEnable:				   getBoolEnv("NET_TLS_ENABLED", false),
 		ConsumerMaxWaitTime:           getIntEnv("CONSUMER_MAX_WAIT_TIME", 250000000),
 		ConsumerMaxProcessingTime:     getIntEnv("CONSUMER_MAX_PROCESSING_TIME", 100000000),
 		ConsumerOffsetsCommitInterval: getIntEnv("CONSUMER_OFFSETS_COMMIT_INTERVAL", 1000000000),
