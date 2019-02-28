@@ -6,10 +6,10 @@ spec:
   channel:
     apiVersion: eventing.knative.dev/v1alpha1
     kind: Channel
-    name: testchannel
+    name: testchannel-2
   subscriber:
     ref:
       apiVersion: serving.knative.dev/v1alpha1
       kind: Service
-      name: message-dumper
+      name: message-dumper-2
 

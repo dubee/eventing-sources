@@ -9,6 +9,11 @@ spec:
     listKind: KafkaEventSourceList
     plural: kafkaeventsources
     singular: kafkaeventsource
+    categories:
+      - all
+      - knative
+      - eventing
+      - sources
   scope: Namespaced
   validation:
     openAPIV3Schema:

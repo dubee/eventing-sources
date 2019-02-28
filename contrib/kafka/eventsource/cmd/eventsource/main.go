@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"strconv"
 	"time"
+	"strings"
 
 	"github.com/Shopify/sarama"
 	cluster "github.com/bsm/sarama-cluster"
@@ -63,16 +64,8 @@ func main() {
 	}
 
 	// init consumer
-	//brokers := []string{eventsourceconfig.BootStrapServers}
+	brokers := strings.Split(eventsourceconfig.BootStrapServers, ",")
 	topics := []string{eventsourceconfig.KafkaTopic}
-
-	brokers := []string{"kafka01-prod01.messagehub.services.us-south.bluemix.net:9093",
-	"kafka02-prod01.messagehub.services.us-south.bluemix.net:9093",
-	"kafka03-prod01.messagehub.services.us-south.bluemix.net:9093",
-	"kafka04-prod01.messagehub.services.us-south.bluemix.net:9093",
-	"kafka05-prod01.messagehub.services.us-south.bluemix.net:9093"}
-	//topics := []string{"dubee"}
-
 	consumerGroupID := eventsourceconfig.ConsumerGroupID
 	if consumerGroupID == "" {
 		consumerGroupID = uuid.New().String()

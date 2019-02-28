@@ -39,8 +39,21 @@ rules:
   verbs:
   - '*'
 - apiGroups:
+  - sources.serving.knative.dev
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
+  - serving.knative.dev
+  resources:
+  - '*'
+  verbs:
+  - '*'
+- apiGroups:
   - eventing.knative.dev
   resources:
+  - services
   - channels
   verbs:
   - get

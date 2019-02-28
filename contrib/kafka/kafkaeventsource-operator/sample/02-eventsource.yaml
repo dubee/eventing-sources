@@ -3,7 +3,7 @@ kind: KafkaEventSource
 metadata:
   name: test-kafkaeventsource
 spec:
-  bootstrap: kafka04-prod01.messagehub.services.us-south.bluemix.net:9093
+  bootstrap: "kafka04-prod01.messagehub.services.us-south.bluemix.net:9093,kafka04-prod02.messagehub.services.us-south.bluemix.net:9093,kafka04-prod03.messagehub.services.us-south.bluemix.net:9093,kafka04-prod04.messagehub.services.us-south.bluemix.net:9093,kafka04-prod05.messagehub.services.us-south.bluemix.net:9093"
   topic: dubee
   net:
     sasl:
@@ -13,6 +13,6 @@ spec:
     tls:
       enable: true
   sink:
-    apiVersion: eventing.knative.dev/v1alpha1
-    kind: Channel
-    name: testchannel
+    apiVersion: serving.knative.dev/v1alpha1
+    kind: Service
+    name: message-dumper-8
