@@ -1,7 +1,7 @@
 apiVersion: serving.knative.dev/v1alpha1
 kind: Service
 metadata:
-  name: message-dumper-8
+  name: kafka-message-logger
 spec:
   runLatest:
     configuration:

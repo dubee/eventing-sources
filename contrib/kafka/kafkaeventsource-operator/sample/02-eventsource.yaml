@@ -15,4 +15,4 @@ spec:
   sink:
     apiVersion: serving.knative.dev/v1alpha1
     kind: Service
-    name: message-dumper-8
+    name: kafka-message-logger
