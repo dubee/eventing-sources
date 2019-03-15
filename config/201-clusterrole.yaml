@@ -26,6 +26,7 @@ rules:
   - cronjobsources
   - githubsources
   - kuberneteseventsources
+  - kafkasources
   verbs: &everything
   - get
   - list
@@ -44,6 +45,7 @@ rules:
   - cronjobsources/status
   - githubsources/status
   - kuberneteseventsources/status
+  - kafkasources/status
   verbs:
   - get
   - update

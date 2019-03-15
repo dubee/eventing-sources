@@ -34,6 +34,8 @@ type Interface interface {
 	GitHubSources() GitHubSourceInformer
 	// KubernetesEventSources returns a KubernetesEventSourceInformer.
 	KubernetesEventSources() KubernetesEventSourceInformer
+	// KafkaSources returns a CronJobSourceInformer.
+	KafkaSources() KafkaSourceInformer
 }
 
 type version struct {
@@ -70,4 +72,9 @@ func (v *version) GitHubSources() GitHubSourceInformer {
 // KubernetesEventSources returns a KubernetesEventSourceInformer.
 func (v *version) KubernetesEventSources() KubernetesEventSourceInformer {
 	return &kubernetesEventSourceInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
+}
+
+// KafkaSources returns a KafkaSourceInformer.
+func (v *version) KafkaSources() KafkaSourceInformer {
+	return &kafkaSourceInformer{factory: v.factory, namespace: v.namespace, tweakListOptions: v.tweakListOptions}
 }

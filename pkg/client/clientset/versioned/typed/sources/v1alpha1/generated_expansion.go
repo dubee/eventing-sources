@@ -27,3 +27,5 @@ type CronJobSourceExpansion interface{}
 type GitHubSourceExpansion interface{}
 
 type KubernetesEventSourceExpansion interface{}
+
+type KafkaSourceExpansion interface{}

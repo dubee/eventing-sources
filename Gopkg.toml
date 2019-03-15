@@ -96,8 +96,22 @@ required = [
 # Use CloudEvents release 0.4.0, happened March 12, 2019
 [[override]]
   name = "github.com/cloudevents/sdk-go"
+<<<<<<< HEAD
   version = "0.4.0"
 
 [[constraint]]
   name = "github.com/apache/camel-k"
   version = "0.2.0"
+  revision = "d50361a5655081514f406b4e672d72e9886c17ad"
+
+[[constraint]]
+  name = "github.com/Shopify/sarama"
+  version = "1.21.0"
+
+[[constraint]]
+  name = "github.com/bsm/sarama-cluster"
+  version = "2.1.15"
+
+[[constraint]]
+  name = "github.com/google/uuid"
+  version = "1.1.0"

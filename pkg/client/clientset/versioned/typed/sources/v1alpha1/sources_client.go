@@ -32,6 +32,7 @@ type SourcesV1alpha1Interface interface {
 	CronJobSourcesGetter
 	GitHubSourcesGetter
 	KubernetesEventSourcesGetter
+	KafkaSourcesGetter
 }
 
 // SourcesV1alpha1Client is used to interact with features provided by the sources.eventing.knative.dev group.
@@ -57,6 +58,10 @@ func (c *SourcesV1alpha1Client) GitHubSources(namespace string) GitHubSourceInte
 
 func (c *SourcesV1alpha1Client) KubernetesEventSources(namespace string) KubernetesEventSourceInterface {
 	return newKubernetesEventSources(c, namespace)
+}
+
+func (c *SourcesV1alpha1Client) KafkaSources(namespace string) KafkaSourceInterface {
+	return newKafkaSources(c, namespace)
 }
 
 // NewForConfig creates a new SourcesV1alpha1Client for the given config.

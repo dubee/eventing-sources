@@ -1,0 +1,16 @@
+apiVersion: sources.eventing.knative.dev/v1alpha1
+kind: ContainerSource
+metadata:
+   name: test-kafkaeventsource
+spec:
+  image: dubee/cmd-da9621faa5d1b885383c5f2066d4a429:latest
+  args:
+    - '--bootstrap=kafka01-prod01.messagehub.services.us-south.bluemix.net:9093'
+    - '--topic=dubee'
+    - '--groupId=foobawr'
+    - '--user=K1jzCQSVE6u54zUs'
+    - '--password=59X5zdlx4x1MP0BI1PDT6EPD5uylvphe'
+  sink:
+    apiVersion: serving.knative.dev/v1alpha1
+    kind: Service
+    name: kafka-message-logger-service

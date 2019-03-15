@@ -39,6 +39,8 @@ spec:
           value: github.com/knative/eventing-sources/cmd/github_receive_adapter
         - name: CRONJOB_RA_IMAGE
           value: github.com/knative/eventing-sources/cmd/cronjob_receive_adapter
+        - name: KAFKA_RA_IMAGE
+          value: dubee/cmd-da9621faa5d1b885383c5f2066d4a429
         resources:
           limits:
             cpu: 100m

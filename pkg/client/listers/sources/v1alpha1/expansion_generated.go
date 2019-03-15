@@ -57,3 +57,11 @@ type KubernetesEventSourceListerExpansion interface{}
 // KubernetesEventSourceNamespaceListerExpansion allows custom methods to be added to
 // KubernetesEventSourceNamespaceLister.
 type KubernetesEventSourceNamespaceListerExpansion interface{}
+
+// KafkaSourceListerExpansion allows custom methods to be added to
+// KafkaSourceLister.
+type KafkaSourceListerExpansion interface{}
+
+// KafkaSourceNamespaceListerExpansion allows custom methods to be added to
+// KafkaSourceNamespaceLister.
+type KafkaSourceNamespaceListerExpansion interface{}
