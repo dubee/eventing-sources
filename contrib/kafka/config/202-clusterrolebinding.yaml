@@ -19,7 +19,7 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: kafka-controller-manager
-  namespace: default
+  namespace: knative-sources
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
