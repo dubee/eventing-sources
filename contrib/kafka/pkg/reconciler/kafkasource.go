@@ -46,7 +46,6 @@ import (
 const (
 	controllerAgentName = "kafka-source-controller"
 	raImageEnvVar       = "KAFKA_RA_IMAGE"
-	finalizerName       = controllerAgentName
 )
 
 func Add(mgr manager.Manager) error {

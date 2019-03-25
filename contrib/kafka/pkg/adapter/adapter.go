@@ -19,7 +19,6 @@ package kafka
 import (
 	"encoding/json"
 	"github.com/Shopify/sarama"
-	"github.com/bsm/sarama-cluster"
 	"github.com/cloudevents/sdk-go/pkg/cloudevents"
 	"github.com/cloudevents/sdk-go/pkg/cloudevents/client"
 	"github.com/cloudevents/sdk-go/pkg/cloudevents/types"
@@ -59,7 +58,10 @@ type Adapter struct {
 	client        client.Client
 }
 
-func (a *Adapter) initClient() error {
+// --------------------------------------------------------------------
+
+// ConsumerGroupHandler functions to define message consume and related logic.
+func (a *Adapter) Setup(_ sarama.ConsumerGroupSession) error {
 	if a.client == nil {
 		var err error
 		if a.client, err = kncloudevents.NewDefaultClient(a.SinkURI); err != nil {
@@ -68,63 +70,73 @@ func (a *Adapter) initClient() error {
 	}
 	return nil
 }
+func (a *Adapter) Cleanup(_ sarama.ConsumerGroupSession) error { return nil }
+func (a *Adapter) ConsumeClaim(sess sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+
+	logger := logging.FromContext(context.TODO())
+
+	for msg := range claim.Messages() {
+		logger.Info("Received: ", zap.Any("value", string(msg.Value)))
+
+		go a.postMessage(context.TODO(), msg)
+		sess.MarkMessage(msg, "")
+	}
+	return nil
+}
+
+// --------------------------------------------------------------------
 
 func (a *Adapter) Start(ctx context.Context, stopCh <-chan struct{}) error {
 	logger := logging.FromContext(ctx)
 
 	logger.Info("Starting with config: ", zap.Any("adapter", a))
 
-	kafkaConfig := cluster.NewConfig()
-	kafkaConfig.Group.Mode = cluster.ConsumerModePartitions
+	kafkaConfig := sarama.NewConfig()
 	kafkaConfig.Consumer.Offsets.Initial = sarama.OffsetOldest
+	kafkaConfig.Version = sarama.V2_0_0_0
+	kafkaConfig.Consumer.Return.Errors = true
 	kafkaConfig.Net.SASL.Enable = a.Net.SASL.Enable
 	kafkaConfig.Net.SASL.User = a.Net.SASL.User
 	kafkaConfig.Net.SASL.Password = a.Net.SASL.Password
 	kafkaConfig.Net.TLS.Enable = a.Net.TLS.Enable
 
-	consumer, err := cluster.NewConsumer(strings.Split(a.Brokers, ","), a.ConsumerGroup, []string{a.Topic}, kafkaConfig)
+	// Start with a client
+	client, err := sarama.NewClient(strings.Split(a.Brokers, ","), kafkaConfig)
 	if err != nil {
 		panic(err)
 	}
-	defer consumer.Close()
+	defer func() { _ = client.Close() }()
 
-	if err := a.initClient(); err != nil {
-		logger.Error("Failed to create cloudevent client", zap.Error(err))
-		return err
+	// init consumer group
+	group, err := sarama.NewConsumerGroupFromClient(a.ConsumerGroup, client)
+	if err != nil {
+		panic(err)
 	}
+	defer func() { _ = group.Close() }()
 
-	return a.pollForMessages(ctx, consumer, stopCh)
-}
+	// Track errors
+	go func() {
+		for err := range group.Errors() {
+			logger.Error("ERROR", err)
+		}
+	}()
 
-func (a *Adapter) pollForMessages(ctx context.Context, consumer *cluster.Consumer, stopCh <-chan struct{}) error {
-	logger := logging.FromContext(ctx)
+	// Handle session
+	go func() {
+		for {
+			cerr := group.Consume(ctx, []string{a.Topic}, a)
+			if cerr  != nil {
+				panic(cerr )
+			}
+		}
+	}()
 
 	for {
 		select {
-		case partition, ok := <-consumer.Partitions():
-			if ok {
-				a.consumerMessages(ctx, consumer, partition)
-			} else {
-				return nil
-			}
 		case <-stopCh:
 			logger.Info("Shutting down...")
 			return nil
 		}
-	}
-}
-
-func (a *Adapter) consumerMessages(ctx context.Context, consumer *cluster.Consumer, partitionConsumer cluster.PartitionConsumer) {
-	logger := logging.FromContext(ctx)
-
-	for msg := range partitionConsumer.Messages() {
-		logger.Info("Received: ", zap.Any("value", string(msg.Value)))
-
-		if err := a.postMessage(ctx, msg); err != nil {
-			logger.Info("Error posting message: ", zap.Error(err))
-		}
-
-		consumer.MarkOffset(msg, "")
 	}
 }
 
