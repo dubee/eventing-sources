@@ -65,8 +65,8 @@ func MakeReceiveAdapter(args *ReceiveAdapterArgs) *v1.Deployment {
 									Value: args.Source.Spec.Brokers,
 								},
 								{
-									Name:  "KAFKA_TOPIC",
-									Value: args.Source.Spec.Topic,
+									Name:  "KAFKA_TOPICS",
+									Value: args.Source.Spec.Topics,
 								},
 								{
 									Name:  "KAFKA_CONSUMER_GROUP",

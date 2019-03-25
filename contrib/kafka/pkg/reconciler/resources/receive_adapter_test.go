@@ -33,7 +33,7 @@ func TestMakeReceiveAdapter(t *testing.T) {
 		},
 		Spec: v1alpha1.KafkaSourceSpec{
 			ServiceAccountName: "source-svc-acct",
-			Topic:              "topic",
+			Topics:              "topic1,topic2",
 			Brokers:            "broker1,broker2",
 			ConsumerGroup:      "group",
 			Net: v1alpha1.KafkaSourceNetSpec{
@@ -100,8 +100,8 @@ func TestMakeReceiveAdapter(t *testing.T) {
 									Value: "broker1,broker2",
 								},
 								{
-									Name:  "KAFKA_TOPIC",
-									Value: "topic",
+									Name:  "KAFKA_TOPICS",
+									Value: "topic1,topic2",
 								},
 								{
 									Name:  "KAFKA_CONSUMER_GROUP",

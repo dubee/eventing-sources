@@ -51,7 +51,7 @@ type AdapterNet struct {
 
 type Adapter struct {
 	Brokers       string
-	Topic         string
+	Topics         string
 	ConsumerGroup string
 	Net           AdapterNet
 	SinkURI       string
@@ -124,7 +124,7 @@ func (a *Adapter) Start(ctx context.Context, stopCh <-chan struct{}) error {
 	// Handle session
 	go func() {
 		for {
-			cerr := group.Consume(ctx, []string{a.Topic}, a)
+			cerr := group.Consume(ctx, strings.Split(a.Topics, ","), a)
 			if cerr  != nil {
 				panic(cerr )
 			}
@@ -152,7 +152,7 @@ func (a *Adapter) postMessage(ctx context.Context, msg *sarama.ConsumerMessage) 
 			Type:        eventType,
 			ID:          "partition:" + strconv.Itoa(int(msg.Partition)) + "/offset:" + strconv.FormatInt(msg.Offset, 10),
 			Time:        &types.Timestamp{Time: msg.Timestamp},
-			Source:      *types.ParseURLRef(a.Topic),
+			Source:      *types.ParseURLRef(msg.Topic),
 			ContentType: cloudevents.StringOfApplicationJSON(),
 			Extensions:  extensions,
 		}.AsV02(),

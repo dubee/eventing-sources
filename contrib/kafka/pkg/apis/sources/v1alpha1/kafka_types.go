@@ -70,9 +70,9 @@ type KafkaSourceSpec struct {
 	// +required
 	Brokers string `json:"brokers"`
 
-	// Topic topic to consume messages from
+	// Topic topics to consume messages from
 	// +required
-	Topic string `json:"topic"`
+	Topics string `json:"topics"`
 
 	// ConsumerGroupID is the consumer group ID.
 	// +required

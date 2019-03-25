@@ -34,7 +34,7 @@ import (
 
 const (
 	envBrokers         = "KAFKA_BROKERS"
-	envTopic           = "KAFKA_TOPIC"
+	envTopics          = "KAFKA_TOPICS"
 	envConsumerGroup   = "KAFKA_CONSUMER_GROUP"
 	envNetSASLEnable   = "KAFKA_NET_SASL_ENABLE"
 	envNetSASLUser     = "KAFKA_NET_SASL_USER"
@@ -77,7 +77,7 @@ func main() {
 
 	adapter := &kafka.Adapter{
 		Brokers:       getRequiredEnv(envBrokers),
-		Topic:         getRequiredEnv(envTopic),
+		Topics:         getRequiredEnv(envTopics),
 		ConsumerGroup: getRequiredEnv(envConsumerGroup),
 		SinkURI:       getRequiredEnv(envSinkURI),
 		Net: kafka.AdapterNet{

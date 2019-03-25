@@ -44,7 +44,7 @@ spec:
           properties:
             brokers:
               type: string
-            topic:
+            topics:
               type: string
             consumerGroup:
               type: string

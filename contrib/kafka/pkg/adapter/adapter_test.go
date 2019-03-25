@@ -57,7 +57,7 @@ func TestPostMessage_ServeHTTP(t *testing.T) {
 			defer sinkServer.Close()
 
 			a := &Adapter{
-				Topic:         "topic",
+				Topics:         "topic1,topic2",
 				Brokers:       "broker1,broker2",
 				ConsumerGroup: "group",
 				SinkURI:       sinkServer.URL,
@@ -74,7 +74,7 @@ func TestPostMessage_ServeHTTP(t *testing.T) {
 
 			m := &sarama.ConsumerMessage{
 				Key:       []byte("key"),
-				Topic:     "topic",
+				Topic:     "topic1",
 				Value:     data,
 				Partition: 1,
 				Offset:    2,

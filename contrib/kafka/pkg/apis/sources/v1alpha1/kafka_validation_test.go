@@ -25,7 +25,7 @@ import (
 var (
 	fullSpec = KafkaSourceSpec{
 		Brokers:       "brokers",
-		Topic:         "topic",
+		Topics:         "topic",
 		ConsumerGroup: "group",
 		Sink: &corev1.ObjectReference{
 			APIVersion: "foo",
@@ -50,7 +50,7 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 		"Topic changed": {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
-				Topic:              "some-other-topic",
+				Topics:              "some-other-topic",
 				Sink:               fullSpec.Sink,
 				ServiceAccountName: fullSpec.ServiceAccountName,
 			},
@@ -59,7 +59,7 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 		"Brokers changed": {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
-				Topic:              "broker1,broker2",
+				Topics:              "broker1,broker2",
 				Sink:               fullSpec.Sink,
 				ServiceAccountName: fullSpec.ServiceAccountName,
 			},
@@ -68,7 +68,7 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 		"Sink.APIVersion changed": {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
-				Topic: fullSpec.Topic,
+				Topics: fullSpec.Topics,
 				Sink: &corev1.ObjectReference{
 					APIVersion: "some-other-api-version",
 					Kind:       fullSpec.Sink.Kind,
@@ -82,7 +82,7 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 		"Sink.Kind changed": {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
-				Topic: fullSpec.Topic,
+				Topics: fullSpec.Topics,
 				Sink: &corev1.ObjectReference{
 					APIVersion: fullSpec.Sink.APIVersion,
 					Kind:       "some-other-kind",
@@ -96,7 +96,7 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 		"Sink.Namespace changed": {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
-				Topic: fullSpec.Topic,
+				Topics: fullSpec.Topics,
 				Sink: &corev1.ObjectReference{
 					APIVersion: fullSpec.Sink.APIVersion,
 					Kind:       fullSpec.Sink.Kind,
@@ -110,7 +110,7 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 		"Sink.Name changed": {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
-				Topic: fullSpec.Topic,
+				Topics: fullSpec.Topics,
 				Sink: &corev1.ObjectReference{
 					APIVersion: fullSpec.Sink.APIVersion,
 					Kind:       fullSpec.Sink.Kind,
@@ -124,7 +124,7 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 		"ServiceAccountName changed": {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
-				Topic: fullSpec.Topic,
+				Topics: fullSpec.Topics,
 				Sink: &corev1.ObjectReference{
 					APIVersion: fullSpec.Sink.APIVersion,
 					Kind:       fullSpec.Sink.Kind,
