@@ -51,7 +51,7 @@ type AdapterNet struct {
 
 type Adapter struct {
 	Brokers       string
-	Topics         string
+	Topics        string
 	ConsumerGroup string
 	Net           AdapterNet
 	SinkURI       string
@@ -125,8 +125,8 @@ func (a *Adapter) Start(ctx context.Context, stopCh <-chan struct{}) error {
 	go func() {
 		for {
 			cerr := group.Consume(ctx, strings.Split(a.Topics, ","), a)
-			if cerr  != nil {
-				panic(cerr )
+			if cerr != nil {
+				panic(cerr)
 			}
 		}
 	}()

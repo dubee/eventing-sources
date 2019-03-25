@@ -57,7 +57,7 @@ func TestPostMessage_ServeHTTP(t *testing.T) {
 			defer sinkServer.Close()
 
 			a := &Adapter{
-				Topics:         "topic1,topic2",
+				Topics:        "topic1,topic2",
 				Brokers:       "broker1,broker2",
 				ConsumerGroup: "group",
 				SinkURI:       sinkServer.URL,

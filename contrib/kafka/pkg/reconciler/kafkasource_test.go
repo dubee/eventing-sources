@@ -210,7 +210,7 @@ func getSource() *sourcesv1alpha1.KafkaSource {
 		ObjectMeta: om(testNS, sourceName),
 		Spec: sourcesv1alpha1.KafkaSourceSpec{
 			Brokers:       "broker1,broker2",
-			Topics:         "topic1,topic2",
+			Topics:        "topic1,topic2",
 			ConsumerGroup: "group",
 			Sink: &corev1.ObjectReference{
 				Name:       addressableName,

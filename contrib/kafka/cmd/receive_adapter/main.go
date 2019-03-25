@@ -77,7 +77,7 @@ func main() {
 
 	adapter := &kafka.Adapter{
 		Brokers:       getRequiredEnv(envBrokers),
-		Topics:         getRequiredEnv(envTopics),
+		Topics:        getRequiredEnv(envTopics),
 		ConsumerGroup: getRequiredEnv(envConsumerGroup),
 		SinkURI:       getRequiredEnv(envSinkURI),
 		Net: kafka.AdapterNet{

@@ -25,7 +25,7 @@ import (
 var (
 	fullSpec = KafkaSourceSpec{
 		Brokers:       "brokers",
-		Topics:         "topic",
+		Topics:        "topic",
 		ConsumerGroup: "group",
 		Sink: &corev1.ObjectReference{
 			APIVersion: "foo",
@@ -50,7 +50,7 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 		"Topic changed": {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
-				Topics:              "some-other-topic",
+				Topics:             "some-other-topic",
 				Sink:               fullSpec.Sink,
 				ServiceAccountName: fullSpec.ServiceAccountName,
 			},
@@ -59,7 +59,7 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 		"Brokers changed": {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
-				Topics:              "broker1,broker2",
+				Topics:             "broker1,broker2",
 				Sink:               fullSpec.Sink,
 				ServiceAccountName: fullSpec.ServiceAccountName,
 			},
