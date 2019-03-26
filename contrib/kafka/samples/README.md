@@ -8,7 +8,7 @@ This sample demonstrates how to configure, deploy, and use the Kafka Event Sourc
 ### Prerequisites
 1. An existing instance of Kafka must be running to use the Kafka Event Source.
     - In order to consume and produce messages, a topic must be created on the Kafka instance.
-    - A list of brokers corresponding to Kafka instance must be obtained.
+    - A list of bootstrap servers corresponding to Kafka instance must be obtained.
 2. Install the `ko` CLI for building and deploying purposes.
     ```
     go get github.com/google/go-containerregistry/cmd/ko
@@ -50,8 +50,23 @@ The following steps build and deploy the Kafka Event Controller, Source, and an 
     2019/03/19 22:25:54 Starting Kafka controller.
     ```
 
+#### Event Display 
+1. Build and deploy the Event Display Service.
+    ```
+    $ ko apply -f contrib/kafka/samples/event-display.yaml
+    ...
+    service.serving.knative.dev/event-display created
+    ``` 
+2. Ensure that the Service pod is running. The pod name will be prefixed with `event-display`.
+    ```
+    $ kubectl get pods
+    NAME                                            READY     STATUS    RESTARTS   AGE
+    event-display-00001-deployment-5d5df6c7-gv2j4   2/2       Running   0          72s
+    ...
+    ```
+
 #### Kafka Event Source
-1. Modify `contrib/kafka/samples/event-source.yaml` accordingly with brokers, topic, etc... 
+1. Modify `contrib/kafka/samples/event-source.yaml` accordingly with bootstrap servers, topics, etc... 
 2. Build and deploy the event source.
     ```
     $ ko apply -f contrib/kafka/samples/event-source.yaml
@@ -67,22 +82,7 @@ The following steps build and deploy the Kafka Event Controller, Source, and an 
 4.  Ensure the Kafka Event Source started with the necessary configuration.
     ```
     $ kubectl logs kafka-source-xlnhq-5544766765-dnl5s
-    {"level":"info","ts":"2019-03-19T22:31:52.689Z","caller":"receive_adapter/main.go:97","msg":"Starting Kafka Receive Adapter...","adapter":{"Brokers":"...","Topic":"...","ConsumerGroup":"...","Net":{"SASL":{"Enable":true,"User":"...","Password":"..."},"TLS":{"Enable":true}},"SinkURI":"http://event-display.default.svc.cluster.local/"}}
-    ```
-
-#### Event Display 
-1. Build and deploy the Event Display Service.
-    ```
-    $ ko apply -f contrib/kafka/samples/event-display.yaml
-    ...
-    service.serving.knative.dev/event-display created
-    ``` 
-2. Ensure that the Service pod is running. The pod name will be prefixed with `event-display`.
-    ```
-    $ kubectl get pods
-    NAME                                            READY     STATUS    RESTARTS   AGE
-    event-display-00001-deployment-5d5df6c7-gv2j4   2/2       Running   0          72s
-    ...
+    {"level":"info","ts":"2019-03-19T22:31:52.689Z","caller":"receive_adapter/main.go:97","msg":"Starting Kafka Receive Adapter...","adapter":{"BootstrapServers":"...","Topics":"...","ConsumerGroup":"...","Net":{"SASL":{"Enable":true,"User":"...","Password":"..."},"TLS":{"Enable":true}},"SinkURI":"http://event-display.default.svc.cluster.local/"}}
     ```
 
 ### Verify
