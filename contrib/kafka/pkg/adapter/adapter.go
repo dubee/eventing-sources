@@ -51,6 +51,7 @@ type AdapterNet struct {
 }
 
 type Adapter struct {
+	Version          sarama.KafkaVersion
 	BootstrapServers string
 	Topics           string
 	ConsumerGroup    string
@@ -106,7 +107,7 @@ func (a *Adapter) Start(ctx context.Context, stopCh <-chan struct{}) error {
 
 	kafkaConfig := sarama.NewConfig()
 	kafkaConfig.Consumer.Offsets.Initial = sarama.OffsetOldest
-	kafkaConfig.Version = sarama.V2_0_0_0
+	kafkaConfig.Version = a.Version
 	kafkaConfig.Consumer.Return.Errors = true
 	kafkaConfig.Net.SASL.Enable = a.Net.SASL.Enable
 	kafkaConfig.Net.SASL.User = a.Net.SASL.User

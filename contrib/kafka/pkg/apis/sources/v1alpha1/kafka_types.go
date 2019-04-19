@@ -66,6 +66,9 @@ type KafkaSourceNetSpec struct {
 
 // KafkaSourceSpec defines the desired state of the KafkaSource.
 type KafkaSourceSpec struct {
+	// Version of Kafka API to use
+	Version string `json:"version"`
+
 	// Bootstrap servers are the Kafka servers the consumer will connect to.
 	// +required
 	BootstrapServers string `json:"bootstrapServers"`

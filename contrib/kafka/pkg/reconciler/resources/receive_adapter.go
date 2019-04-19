@@ -61,6 +61,10 @@ func MakeReceiveAdapter(args *ReceiveAdapterArgs) *v1.Deployment {
 							Image: args.Image,
 							Env: []corev1.EnvVar{
 								{
+									Name:  "KAFKA_VERSION",
+									Value: args.Source.Spec.Version,
+								},
+								{
 									Name:  "KAFKA_BOOTSTRAP_SERVERS",
 									Value: args.Source.Spec.BootstrapServers,
 								},

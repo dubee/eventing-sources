@@ -25,6 +25,7 @@ import (
 
 var (
 	fullSpec = KafkaSourceSpec{
+		Version:          "2.0.0",
 		BootstrapServers: "servers",
 		Topics:           "topics",
 		ConsumerGroup:    "group",
@@ -61,6 +62,15 @@ func TestKafkaSourceCheckImmutableFields(t *testing.T) {
 			orig: &fullSpec,
 			updated: KafkaSourceSpec{
 				BootstrapServers:   "server1,server2",
+				Sink:               fullSpec.Sink,
+				ServiceAccountName: fullSpec.ServiceAccountName,
+			},
+			allowed: false,
+		},
+		"Version changed": {
+			orig: &fullSpec,
+			updated: KafkaSourceSpec{
+				Version:            "2.0.1",
 				Sink:               fullSpec.Sink,
 				ServiceAccountName: fullSpec.ServiceAccountName,
 			},

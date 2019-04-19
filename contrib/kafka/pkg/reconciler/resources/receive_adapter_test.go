@@ -19,6 +19,7 @@ package resources
 import (
 	"testing"
 
+	"github.com/Shopify/sarama"
 	"github.com/google/go-cmp/cmp"
 	"github.com/knative/eventing-sources/contrib/kafka/pkg/apis/sources/v1alpha1"
 	v1 "k8s.io/api/apps/v1"
@@ -34,8 +35,9 @@ func TestMakeReceiveAdapter(t *testing.T) {
 		},
 		Spec: v1alpha1.KafkaSourceSpec{
 			ServiceAccountName: "source-svc-acct",
-			Topics:             "topic1,topic2",
+			Version:            "2.0.0",
 			BootstrapServers:   "server1,server2",
+			Topics:             "topic1,topic2",
 			ConsumerGroup:      "group",
 			Net: v1alpha1.KafkaSourceNetSpec{
 				SASL: v1alpha1.KafkaSourceSASLSpec{
@@ -95,6 +97,10 @@ func TestMakeReceiveAdapter(t *testing.T) {
 							Name:  "receive-adapter",
 							Image: "test-image",
 							Env: []corev1.EnvVar{
+								{
+									Name:  "KAFKA_VERSION",
+									Value: sarama.V2_0_0_0.String(),
+								},
 								{
 									Name:  "KAFKA_BOOTSTRAP_SERVERS",
 									Value: "server1,server2",

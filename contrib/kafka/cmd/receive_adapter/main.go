@@ -22,6 +22,8 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/Shopify/sarama"
+
 	kafka "github.com/knative/eventing-sources/contrib/kafka/pkg/adapter"
 
 	"go.uber.org/zap"
@@ -34,6 +36,7 @@ import (
 )
 
 const (
+	envKafkaVersion     = "KAFKA_VERSION"
 	envBootstrapServers = "KAFKA_BOOTSTRAP_SERVERS"
 	envTopics           = "KAFKA_TOPICS"
 	envConsumerGroup    = "KAFKA_CONSUMER_GROUP"
@@ -65,6 +68,18 @@ func getOptionalBoolEnv(key string) bool {
 	return false
 }
 
+func getKafkaVersion(key string, defaultVersion sarama.KafkaVersion) sarama.KafkaVersion {
+	if val, defined := os.LookupEnv(key); defined {
+		if res, err := sarama.ParseKafkaVersion(val); err != nil {
+			log.Fatal(err)
+		} else {
+			return res
+		}
+	}
+
+	return defaultVersion
+}
+
 func main() {
 	flag.Parse()
 
@@ -79,6 +94,7 @@ func main() {
 	}
 
 	adapter := &kafka.Adapter{
+		Version:          getKafkaVersion(envKafkaVersion, sarama.V2_0_0_0),
 		BootstrapServers: getRequiredEnv(envBootstrapServers),
 		Topics:           getRequiredEnv(envTopics),
 		ConsumerGroup:    getRequiredEnv(envConsumerGroup),
